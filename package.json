@@ -1,0 +1,17 @@
+{
+  "type": "module",
+  "name": "adventofcode",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Clément Bourgoin <c@iwzr.fr>",
+  "license": "MIT",
+  "dependencies": {
+    "jest": "^27.4.3"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --watch"
+  },
+  "devDependencies": {
+    "prettier": "2.5.0"
+  }
+}
