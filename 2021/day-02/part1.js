@@ -1,28 +1,24 @@
+import { encodePosition, parseCommandsFromInput } from "./lib";
+
 export default function calculateFinalPosition(input) {
-  const commands = input.split("\n");
-  const parsedCommands = commands.map(rawCommand => {
-    return rawCommand.split(" ");
-  })
+  const commands = parseCommandsFromInput(input);
+  const startPosition = { horizontal: 0, depth: 0 };
+  const finalPosition = commands.reduce(_calculateNewPosition, startPosition);
+  return encodePosition(finalPosition);
+}
 
-  let horizontalPosition = 0;
-  let verticalPosition = 0;
-  for (let i = 0; i < parsedCommands.length; i++) {
-    const currentCommand = parsedCommands[i];
-    const direction = currentCommand[0];
-    const distance = parseInt(currentCommand[1]);
-
-    if (direction === "forward") {
-      horizontalPosition += distance;
-    }
-
-    if (direction === "up") {
-      verticalPosition -= distance;
-    }
-
-    if (direction === "down") {
-      verticalPosition += distance;
-    }
+function _calculateNewPosition({ horizontal, depth }, currentCommand) {
+  if (currentCommand.direction === "forward") {
+    horizontal += currentCommand.distance;
   }
 
-  return verticalPosition * horizontalPosition;
+  if (currentCommand.direction === "up") {
+    depth -= currentCommand.distance;
+  }
+
+  if (currentCommand.direction === "down") {
+    depth += currentCommand.distance;
+  }
+
+  return { horizontal, depth };
 }

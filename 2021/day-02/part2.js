@@ -1,30 +1,25 @@
-export default function calculateFinalPositionWithAim(input) {
-  const commands = input.split("\n");
-  const parsedCommands = commands.map((rawCommand) => {
-    return rawCommand.split(" ");
-  });
+import { encodePosition, parseCommandsFromInput } from "./lib";
 
-  let horizontalPosition = 0;
-  let depth = 0;
-  let aim = 0;
-  for (let i = 0; i < parsedCommands.length; i++) {
-    const currentCommand = parsedCommands[i];
-    const direction = currentCommand[0];
-    const distance = parseInt(currentCommand[1]);
+export default function calculateFinalPosition(input) {
+  const commands = parseCommandsFromInput(input);
+  const startPosition = { horizontal: 0, depth: 0, aim: 0 };
+  const finalPosition = commands.reduce(_calculateNewPosition, startPosition);
+  return encodePosition(finalPosition);
+}
 
-    if (direction === "forward") {
-      horizontalPosition += distance;
-      depth += aim * distance;
-    }
-
-    if (direction === "up") {
-      aim -= distance;
-    }
-
-    if (direction === "down") {
-      aim += distance;
-    }
+function _calculateNewPosition({ horizontal, depth, aim }, currentCommand) {
+  if (currentCommand.direction === "forward") {
+    horizontal += currentCommand.distance;
+    depth += aim * currentCommand.distance;
   }
 
-  return horizontalPosition * depth;
+  if (currentCommand.direction === "up") {
+    aim -= currentCommand.distance;
+  }
+
+  if (currentCommand.direction === "down") {
+    aim += currentCommand.distance;
+  }
+
+  return { horizontal, depth, aim };
 }
