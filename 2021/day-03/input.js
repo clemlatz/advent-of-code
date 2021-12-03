@@ -1,7 +1,7 @@
-import calculatePowerConsumption from "./part1.js";
+import part1 from "./part1.js";
+import part2 from "./part2.js";
 
-console.log(
-  calculatePowerConsumption(`000011110010
+const input = `000011110010
 010000100100
 010011111111
 000101001111
@@ -1000,5 +1000,7 @@ console.log(
 111000101101
 110100000101
 011001000001
-001011000111`)
-);
+001011000111`;
+
+console.log(`Part 1 solution: ${part1(input)}`);
+console.log(`Part 2 solution: ${part2(input)}`);

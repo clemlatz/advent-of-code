@@ -1,43 +1,30 @@
+import {
+  encodeAnswer,
+  getLeastCommonBitForColumn,
+  getMostCommonBitForColumn,
+  parseBitLinesFromInput,
+} from "./lib.js";
+
 export default function calculatePowerConsumption(input) {
-  const lines = input.split('\n');
-  const data = lines.map((line) => line.split("").map((bit) => parseInt(bit)));
-  const columnNumber = data[0].length;
-
-  let epsilonRate = "";
-  for (let i = 0; i < columnNumber; i++) {
-    const mostCommonBitForColumn = _getMostCommonBitForColumn(data, i);
-    epsilonRate += mostCommonBitForColumn;
-  }
-  const epsilonRateInDecimal = parseInt(epsilonRate, 2);
-
-  let gammaRate = "";
-  for (let i = 0; i < columnNumber; i++) {
-    const mostCommonBitForColumn = _getLeastCommonBitForColumn(data, i);
-    gammaRate += mostCommonBitForColumn;
-  }
-  const gammaRateInDecimal = parseInt(gammaRate, 2);
-
-  return epsilonRateInDecimal * gammaRateInDecimal;
+  const bitLines = parseBitLinesFromInput(input);
+  const epsilonRate = _getEpsilonRate(bitLines);
+  const gammaRate = _getGammaRate(bitLines);
+  return encodeAnswer(epsilonRate, gammaRate);
 }
 
-function _getMostCommonBitForColumn(data, column) {
-  let zeros = 0;
-  let ones = 0;
-  data.forEach(line => {
-    const bit = line[column];
-    if (bit === 0) zeros++;
-    if (bit === 1) ones++;
-  });
- return zeros > ones ? 0 : 1;
+function _getEpsilonRate(bitLines) {
+  return _getRate(bitLines, getMostCommonBitForColumn);
 }
 
-function _getLeastCommonBitForColumn(data, column) {
-  let zeros = 0;
-  let ones = 0;
-  data.forEach(line => {
-    const bit = line[column];
-    if (bit === 0) zeros++;
-    if (bit === 1) ones++;
-  });
-  return zeros < ones ? 0 : 1;
+function _getGammaRate(bitLines) {
+  return _getRate(bitLines, getLeastCommonBitForColumn);
+}
+
+function _getRate(bitLines, bitSelectionFunction) {
+  const columns = bitLines[0];
+  const initialRate = "";
+  return columns.reduce((rate, _, columnNumber) => {
+    const selectedBit = bitSelectionFunction(bitLines, columnNumber);
+    return `${rate}${selectedBit}`;
+  }, initialRate);
 }

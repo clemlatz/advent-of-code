@@ -1,55 +1,39 @@
+import {
+  encodeAnswer,
+  getLeastCommonBitForColumn,
+  getMostCommonBitForColumn,
+  parseBitLinesFromInput,
+} from "./lib.js";
+
 export default function calculateLifeSupportRating(input) {
-  const lines = input.split('\n');
-  const data = lines.map((line) => line.split("").map((bit) => parseInt(bit)));
-  const columnNumber = data[0].length;
-
-  let selectedLines = data;
-  let lastLine;
-  for (let i = 0; i < columnNumber; i++) {
-    const mostCommonBitForColumn = _getMostCommonBitForColumn(selectedLines, i);
-    selectedLines = _keepOnlyLinesWithBitCriteriaAtColumn(selectedLines, mostCommonBitForColumn, i);
-    if (selectedLines.length === 1) {
-      lastLine = selectedLines[0];
-      break;
-    }
-  }
-  const oxygenGeneratorRating = parseInt(lastLine.join(""), 2);
-
-  selectedLines = data;
-  for (let i = 0; i < columnNumber; i++) {
-    const mostCommonBitForColumn = _getLeastCommonBitForColumn(selectedLines, i);
-    selectedLines = _keepOnlyLinesWithBitCriteriaAtColumn(selectedLines, mostCommonBitForColumn, i);
-    if (selectedLines.length === 1) {
-      lastLine = selectedLines[0];
-      break;
-    }
-  }
-  const co2ScrubberRating = parseInt(lastLine.join(""), 2);
-
-  return oxygenGeneratorRating * co2ScrubberRating;
+  const bitLines = parseBitLinesFromInput(input);
+  const oxygenGeneratorRating = _getOxygenGeneratorRating(bitLines);
+  const co2ScrubberRating = _getCo2ScrubberRating(bitLines);
+  return encodeAnswer(oxygenGeneratorRating, co2ScrubberRating);
 }
 
-function _getMostCommonBitForColumn(data, column) {
-  let zeros = 0;
-  let ones = 0;
-  data.forEach(line => {
-    const bit = line[column];
-    if (bit === 0) zeros++;
-    if (bit === 1) ones++;
-  });
-  return zeros > ones ? 0 : 1;
+function _getOxygenGeneratorRating(bitLines) {
+  return _calculateRating(bitLines, getMostCommonBitForColumn);
 }
 
-function _getLeastCommonBitForColumn(data, column) {
-  let zeros = 0;
-  let ones = 0;
-  data.forEach(line => {
-    const bit = line[column];
-    if (bit === 0) zeros++;
-    if (bit === 1) ones++;
-  });
-  if (zeros === ones) return 0;
-  return zeros < ones ? 0 : 1;
+function _getCo2ScrubberRating(bitLines) {
+  return _calculateRating(bitLines, getLeastCommonBitForColumn);
+}
+
+function _calculateRating(bitLines, bitSelectionFunction) {
+  let selectedLines = bitLines;
+  const numberOfColumns = bitLines[0].length;
+  for (let column = 0; column < numberOfColumns; column++) {
+    const bitCriteria = bitSelectionFunction(selectedLines, column);
+    selectedLines = _keepOnlyLinesWithBitCriteriaAtColumn(
+      selectedLines,
+      bitCriteria,
+      column
+    );
+    if (selectedLines.length === 1) {
+      return selectedLines[0].join("");
+    }
+  }
 }
 
 function _keepOnlyLinesWithBitCriteriaAtColumn(lines, bitCritera, column) {
