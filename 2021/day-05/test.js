@@ -21,11 +21,11 @@ describe("Day 05", () => {
     expect(result).toBe(5);
   });
 
-  // test("returns correct answer for part 2 test input", () => {
-  //   // when
-  //   const result = part2(input);
-  //
-  //   // then
-  //   expect(result).toBe(1924);
-  // });
+  test("returns correct answer for part 2 test input", () => {
+    // when
+    const result = part2(input);
+
+    // then
+    expect(result).toBe(12);
+  });
 });
