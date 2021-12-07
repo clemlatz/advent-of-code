@@ -1,32 +1,24 @@
+import {
+  calculateRequiredFuelForDestination,
+  getAllPossibleDestinations,
+  parseCrabsPositionsFromInput
+} from "./lib.js";
 
 export default function calculateFuelRequiredForOptimalMove(input) {
-  const crabs = input.split(',').map(position => parseInt(position));
+  const crabsPositions = parseCrabsPositionsFromInput(input);
+  const possibleDestinations = getAllPossibleDestinations(crabsPositions);
+  const fuelRequiredPerDestination = possibleDestinations.map((destination) => {
+    return calculateRequiredFuelForDestination(
+      crabsPositions,
+      destination,
+      _calculateFuelRequiredForMove
+    );
+  });
 
-  const greatestPosition = Math.max(...crabs);
-  const fuelRequiredPerPosition = [];
-  for (let currentFinalPosition = 0; currentFinalPosition <= greatestPosition; currentFinalPosition++) {
-    const fuelRequiredForCurrentPosition = calculateFuelRequiredForPosition(crabs, currentFinalPosition);
-    fuelRequiredPerPosition.push(fuelRequiredForCurrentPosition);
-  }
-  return Math.min(...fuelRequiredPerPosition);
+  return Math.min(...fuelRequiredPerDestination);
 }
 
-function calculateFuelRequiredForPosition(crabs, currentFinalPosition) {
-  let movements = 0;
-  let fuelRequiredByMove = 0;
-  for (let currentCrabIndex = 0; currentCrabIndex < crabs.length; currentCrabIndex++) {
-    const currentCrabPosition = crabs[currentCrabIndex];
-    const currentCrabMovement = Math.abs(currentCrabPosition - currentFinalPosition);
-    fuelRequiredByMove += calculateFuelRequiredForCrabMove(currentCrabMovement);
-    movements += currentCrabMovement;
-  }
-  return fuelRequiredByMove;
-}
-
-function calculateFuelRequiredForCrabMove(distance) {
-  let fuelRequired = 0;
-  for (let currentPosition = 1; currentPosition <= distance; currentPosition++) {
-    fuelRequired += currentPosition;
-  }
-  return fuelRequired;
+function _calculateFuelRequiredForMove(start, end) {
+  const distance = Math.abs(start - end);
+  return distance * (distance + 1) / 2;
 }

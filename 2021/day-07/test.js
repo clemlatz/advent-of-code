@@ -19,5 +19,4 @@ describe("Day 07", () => {
     // then
     expect(result).toBe(168);
   });
-
 });
