@@ -39,7 +39,7 @@ describe("Day 06", () => {
       expect(result).toBe(5934);
     });
 
-    test("returns correct fish count for 26 days", () => {
+    test("returns correct fish count for 246 days", () => {
       // when
       const result = part2(input, 256);
 
